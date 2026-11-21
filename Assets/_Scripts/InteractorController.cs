@@ -1,47 +1,51 @@
 using System.Collections.Generic;
+using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InteractorController : MonoBehaviour {
-    [SerializeField] private InputActionReference interactionActionRefrence;
+    [SerializeField] private InputAction interactionAction;
     private List<IInteractable> interactables = new List<IInteractable>(); // Collection of interactable that are currently in range of the interactor
 
     private void OnEnable() {
-        this.interactionActionRefrence.action.Enable();
-        this.interactionActionRefrence.action.performed += OnInteraction;
+        this.interactionAction.Enable();
+        this.interactionAction.performed += OnInteraction;
     }
 
     private void OnDisable() {
-        this.interactionActionRefrence.action.performed -= OnInteraction;
-        this.interactionActionRefrence.action.Disable();
+        this.interactionAction.performed -= OnInteraction;
+        this.interactionAction.Disable();
     }
 
-    private void OnTriggerEnter(Collider other) {
-        other.TryGetComponent(out IInteractable interactable);
-
-        if (interactable == null) {
-            interactable = other.GetComponentInParent<IInteractable>();
-            if (interactable == null) {
-                interactable = other.GetComponentInChildren<IInteractable>();
-            }
-        }
+    private void OnTriggerEnter2D(Collider2D collision) {
+        IInteractable interactable = GetInteractable(collision);
 
         if (interactable != null) {
             interactables.Add(interactable);
         }
     }
 
-    private void OnTriggerExit(Collider other) {
-        other.TryGetComponent(out IInteractable interactable);
-        if (interactable == null) {
-            interactable = other.GetComponentInParent<IInteractable>();
-            if (interactable == null) {
-                interactable = other.GetComponentInChildren<IInteractable>();
-            }
-        }
+    private void OnTriggerExit2D(Collider2D collision) {
+        IInteractable interactable = GetInteractable(collision);
+
         if (interactable != null) {
             interactables.Remove(interactable);
         }
+    }
+
+    [ContextMenu("Debug Available Interactions")]
+    public void DebugAvaiableInteractions() {
+        StringBuilder debugMessage = new StringBuilder();
+        debugMessage.AppendLine($"Available Interactions: {interactables.Count}");
+        foreach (IInteractable interactable in interactables) {
+            if (interactable is MonoBehaviour monoBehaviour) {
+                debugMessage.AppendLine($"- {monoBehaviour.gameObject.name}");
+            } else {
+                debugMessage.AppendLine($"- {interactable.GetType().Name}");
+            }
+        }
+        Debug.Log(debugMessage.ToString());
     }
     private void OnInteraction(InputAction.CallbackContext context) {
         IInteractable closestInteractable = null;
@@ -64,5 +68,17 @@ public class InteractorController : MonoBehaviour {
         });
 
         closestInteractable?.Interact();
+    }
+
+    private static IInteractable GetInteractable(Collider2D other) {
+        other.TryGetComponent(out IInteractable interactable);
+        if (interactable == null) {
+            interactable = other.GetComponentInParent<IInteractable>();
+            if (interactable == null) {
+                interactable = other.GetComponentInChildren<IInteractable>();
+            }
+        }
+
+        return interactable;
     }
 }
