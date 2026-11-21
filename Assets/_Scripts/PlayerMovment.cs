@@ -9,6 +9,7 @@ public class PlayerMovment : MonoBehaviour {
     private Vector2 moveInput;
 
     [SerializeField] private float moveSpeed = 5f;
+    [field: SerializeField] public bool IsFacingRight { get; private set; } = true;
 
 
     private void OnEnable() {
@@ -25,6 +26,11 @@ public class PlayerMovment : MonoBehaviour {
 
     private void OnMove(InputAction.CallbackContext context) {
         this.moveInput = context.ReadValue<Vector2>();
+        if (this.moveInput.x > 0) {
+            this.IsFacingRight = true;
+        } else if (this.moveInput.x < 0) {
+            this.IsFacingRight = false;
+        }
     }
 
     private void FixedUpdate() {
