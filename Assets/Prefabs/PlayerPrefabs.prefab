@@ -391,7 +391,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f530b16ae4cb59847b08bf91398beb43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  interactionActionRefrence: {fileID: 1781555164194001046, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  interactionAction:
+    m_Name: Interaction
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 577f2f13-a95e-435d-9eec-3593d33a92a6
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+    m_Priority: 0
 --- !u!58 &3472878143369980800
 CircleCollider2D:
   m_ObjectHideFlags: 0

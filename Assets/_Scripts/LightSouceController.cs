@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Rendering.Universal;
 
 public class LightSouceController : MonoBehaviour, IInteractable {
@@ -7,15 +8,19 @@ public class LightSouceController : MonoBehaviour, IInteractable {
     [SerializeField] private SpriteRenderer lightSourceSpriteRenderer;
     [SerializeField] private Light2D lightSourceLight2D;
     [field: SerializeField] public bool IsLightOn { get; private set; } = false;
+
+    public bool IsOn => IsLightOn;
+
     [SerializeField] private Sprite[] lightOnSprites;
     [SerializeField] private Sprite[] lightOffSprites;
     private Coroutine animationCoroutine;
-
-    private void Start() {
+    public UnityEvent<bool> OnLightStateChanged;
+    private void Awake() {
         if (this.IsLightOn) {
             TurnOnLight();
         } else {
             TurnOffLight();
+            
         }
     }
 
@@ -25,6 +30,7 @@ public class LightSouceController : MonoBehaviour, IInteractable {
         this.lightSourceLight2D.enabled = true;
         if (this.animationCoroutine != null) StopCoroutine(this.animationCoroutine);
         this.animationCoroutine = StartCoroutine(AnimationPlayer(this.lightSourceSpriteRenderer, this.lightOnSprites, 0.1f, 0));
+        OnLightStateChanged?.Invoke(true);
     }
 
     [ContextMenu("Turn Off Light")]
@@ -33,6 +39,7 @@ public class LightSouceController : MonoBehaviour, IInteractable {
         this.lightSourceLight2D.enabled = false;
         if (this.animationCoroutine != null) StopCoroutine(this.animationCoroutine);
         this.animationCoroutine = StartCoroutine(AnimationPlayer(this.lightSourceSpriteRenderer, this.lightOffSprites, 0.1f, 0));
+        OnLightStateChanged?.Invoke(false);
     }
 
     public static IEnumerator AnimationPlayer(SpriteRenderer renderer, Sprite[] sprites, float delay, int startIndex) {
