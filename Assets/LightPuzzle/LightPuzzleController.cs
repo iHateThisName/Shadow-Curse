@@ -20,24 +20,37 @@ namespace ShadowCurse.LightPuzzle {
         [SerializeField, Min(0.01f)] private float beamThickness = 0.16f;
         [SerializeField] private Color beamColor = new Color(1f, 0.78f, 0.2f, 1f);
         [SerializeField] private int beamSortingOrder = -1;
+        [SerializeField] private bool beamStartsActive = false;
 
         [Header("Completion")]
+        [SerializeField] private GameObject armObstacle;
+        [SerializeField, Min(0f)] private float armObstacleRemovalDelay = 4f;
         [SerializeField] private UnityEvent onPuzzleSolved = new UnityEvent();
 
         private readonly Dictionary<Vector2Int, PuzzleMirror> mirrors = new Dictionary<Vector2Int, PuzzleMirror>();
         private readonly HashSet<Vector2Int> obstacles = new HashSet<Vector2Int>();
         private Transform beamContainer;
         private bool wasSolved;
+        private bool obstacleRemovalScheduled;
 
         public bool IsSolved { get; private set; }
+        public bool IsBeamActive { get; private set; }
 
         private void Start() {
+            IsBeamActive = beamStartsActive;
             RebuildNodeLookup();
-            RefreshBeam();
+            if (IsBeamActive) RefreshBeam();
+            else ClearBeam();
         }
 
         [ContextMenu("Refresh Beam")]
         public void RefreshBeam() {
+            if (!IsBeamActive) {
+                IsSolved = false;
+                ClearBeam();
+                return;
+            }
+
             RebuildNodeLookup();
             ClearBeam();
 
@@ -48,12 +61,33 @@ namespace ShadowCurse.LightPuzzle {
             if (IsSolved && !wasSolved) {
                 Debug.Log("Light puzzle solved: the beam reached the receiver.", this);
                 onPuzzleSolved?.Invoke();
+                ScheduleArmObstacleRemoval();
             }
             wasSolved = IsSolved;
         }
 
-        public void Configure(GameObject lightPrefab) {
+        public void SetBeamActive(bool active) {
+            IsBeamActive = active;
+            beamStartsActive = active;
+            wasSolved = false;
+
+            if (active) RefreshBeam();
+            else {
+                IsSolved = false;
+                ClearBeam();
+            }
+        }
+
+        public void Configure(GameObject lightPrefab, GameObject armObstacleObject) {
             beamSegmentPrefab = lightPrefab;
+            armObstacle = armObstacleObject;
+        }
+
+        private void ScheduleArmObstacleRemoval() {
+            if (obstacleRemovalScheduled || armObstacle == null) return;
+            obstacleRemovalScheduled = true;
+            Debug.Log("Light puzzle complete. ArmObstacle will be removed in " + armObstacleRemovalDelay + " seconds.", armObstacle);
+            Destroy(armObstacle, armObstacleRemovalDelay);
         }
 
         private void RebuildNodeLookup() {

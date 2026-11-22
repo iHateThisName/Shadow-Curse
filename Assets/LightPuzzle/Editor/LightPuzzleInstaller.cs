@@ -35,10 +35,14 @@ namespace ShadowCurse.LightPuzzle.Editor {
                 return;
             }
 
+            EnsureLevelGameManager(scene);
+
             LightPuzzleController controller = root.GetComponent<LightPuzzleController>();
             if (controller == null) controller = Undo.AddComponent<LightPuzzleController>(root);
+
+            GameObject armObstacle = FindSceneObject(scene, "ArmObstacle");
             Undo.RecordObject(controller, "Configure Light Puzzle");
-            controller.Configure(lightPrefab);
+            controller.Configure(lightPrefab, armObstacle);
             EditorUtility.SetDirty(controller);
 
             int mirrorCount = 0;
@@ -68,9 +72,54 @@ namespace ShadowCurse.LightPuzzle.Editor {
                 mirrorCount++;
             }
 
+            GameObject startPoint = FindSceneObject(scene, "StartPoint");
+            if (startPoint == null) {
+                EditorUtility.DisplayDialog("Light Puzzle", "Could not find the StartPoint object.", "OK");
+                return;
+            }
+
+            PuzzleStartPoint puzzleStart = startPoint.GetComponent<PuzzleStartPoint>();
+            if (puzzleStart == null) puzzleStart = Undo.AddComponent<PuzzleStartPoint>(startPoint);
+
+            Collider2D startCollider = startPoint.GetComponent<Collider2D>();
+            if (startCollider == null) {
+                CircleCollider2D circle = Undo.AddComponent<CircleCollider2D>(startPoint);
+                circle.radius = 1.25f;
+                startCollider = circle;
+            }
+            startCollider.isTrigger = true;
+
+            Undo.RecordObject(puzzleStart, "Configure Puzzle Start Point");
+            puzzleStart.Configure(controller);
+            EditorUtility.SetDirty(puzzleStart);
+
             EditorSceneManager.MarkSceneDirty(scene);
-            Debug.Log("Light puzzle installed on " + mirrorCount + " mirrors. Press Space near a mirror to rotate it.", root);
+            Debug.Log("Light puzzle installed on " + mirrorCount + " mirrors. Activate StartPoint with one charge, then rotate mirrors with Space.", root);
             Selection.activeGameObject = root;
+        }
+
+        private static GameObject FindSceneObject(Scene scene, string objectName) {
+            return scene.GetRootGameObjects()
+                .SelectMany(item => item.GetComponentsInChildren<Transform>(true))
+                .FirstOrDefault(item => item.name == objectName)?.gameObject;
+        }
+
+        private static void EnsureLevelGameManager(Scene scene) {
+            GameManager manager = Object.FindFirstObjectByType<GameManager>(FindObjectsInactive.Include);
+            if (manager == null) {
+                GameObject managerObject = new GameObject("GameManager");
+                Undo.RegisterCreatedObjectUndo(managerObject, "Create Level3 GameManager");
+                SceneManager.MoveGameObjectToScene(managerObject, scene);
+                manager = Undo.AddComponent<GameManager>(managerObject);
+            }
+
+            SerializedObject serializedManager = new SerializedObject(manager);
+            SerializedProperty currentLights = serializedManager.FindProperty("<CurrentLights>k__BackingField");
+            if (currentLights != null && currentLights.intValue < 1) {
+                currentLights.intValue = 1;
+                serializedManager.ApplyModifiedProperties();
+                EditorUtility.SetDirty(manager);
+            }
         }
     }
 }
