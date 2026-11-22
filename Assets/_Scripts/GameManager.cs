@@ -1,5 +1,5 @@
 using UnityEngine;
-
+[DefaultExecutionOrder(-1)]
 public class GameManager : MonoBehaviour {
 
     public static GameManager Instance { get; private set; }
@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
     public bool SpendLight() {
         if (CurrentLights > 0) {
             CurrentLights--;
+            PlayerUI.Instance.UpdateMirrorUI(this.CurrentLights);
             return true;
         }
         return false;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour {
     public bool AddLight() {
         if (CurrentLights < MaxLights) {
             CurrentLights++;
+            PlayerUI.Instance.UpdateMirrorUI(this.CurrentLights);
             return true;
         }
         return false;
