@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
     public bool IsPlayerDead { get; private set; } = false;
 
     [SerializeField] private Canvas gameOverCanvas;
+
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(this.gameObject);
@@ -42,6 +43,10 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Player has been killed.");
         this.IsPlayerDead = true;
         this.gameOverCanvas.gameObject.SetActive(true);
+    }
+
+    public void loadSceneInIndex(int index) {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(index);
     }
 
 

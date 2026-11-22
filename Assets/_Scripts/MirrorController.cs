@@ -50,7 +50,7 @@ public class MirrorController : MonoBehaviour
                 this.anim.SetTrigger(PlayerAnimation.MirrorFrontTrigger);
             }
 
-            Debug.Log($"Mirror Flash! Player Direction: {playerMovment.currentDirection}, Mirror Light Rotation: {mirrorLight.gameObject.transform.rotation.eulerAngles}");
+            //Debug.Log($"Mirror Flash! Player Direction: {playerMovment.currentDirection}, Mirror Light Rotation: {mirrorLight.gameObject.transform.rotation.eulerAngles}");
 
             // Turn on the light
             mirrorLight.gameObject.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, mirrorLight.gameObject.transform.position.z);

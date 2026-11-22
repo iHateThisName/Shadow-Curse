@@ -17,7 +17,6 @@ public class PlayerAnimation : MonoBehaviour {
 
     [SerializeField] private Animator animator;
     public void SetTrigger(string triggerName) {
-        Debug.Log($"Setting trigger: {triggerName}");
         this.animator.SetTrigger(triggerName);
     }
 }
