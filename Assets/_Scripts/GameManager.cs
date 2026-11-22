@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour {
     private readonly int MaxLights = 3;
     [field: SerializeField] public int CurrentLights { get; private set; } = 0;
 
+    public static readonly string PlayerTag = "Player";
+
+    public bool IsPlayerDead { get; private set; } = false;
+
+    [SerializeField] private Canvas gameOverCanvas;
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(this.gameObject);
@@ -31,6 +36,12 @@ public class GameManager : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public void OnPlayerKilled() {
+        Debug.Log("Player has been killed.");
+        this.IsPlayerDead = true;
+        this.gameOverCanvas.gameObject.SetActive(true);
     }
 
 

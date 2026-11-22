@@ -659,7 +659,15 @@ MonoBehaviour:
     m_Id: 577f2f13-a95e-435d-9eec-3593d33a92a6
     m_Processors: 
     m_Interactions: 
-    m_SingletonActionBindings: []
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 6edcf2cd-1175-4140-abfb-431f09ba185f
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Interaction
+      m_Flags: 0
     m_Flags: 0
     m_Priority: 0
 --- !u!58 &3472878143369980800
@@ -858,6 +866,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -2253911629886400664, guid: eae87cd7becda664a9028e3e71783f81, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: -2253911629886400664, guid: eae87cd7becda664a9028e3e71783f81, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: eae87cd7becda664a9028e3e71783f81, type: 3}
