@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +9,7 @@ public class PlayerMovment : MonoBehaviour {
 
     [SerializeField] private float moveSpeed = 5f;
     [field: SerializeField] public bool IsFacingRight { get; private set; } = true;
+    [SerializeField] private PlayerAnimation playerAnimation;
 
 
     private void OnEnable() {
@@ -20,7 +20,7 @@ public class PlayerMovment : MonoBehaviour {
 
 
     private void OnDisable() {
-        moveInputRefrence.action.performed -= OnMove;   
+        moveInputRefrence.action.performed -= OnMove;
         moveInputRefrence.action.canceled -= OnMove;
     }
 
@@ -28,12 +28,24 @@ public class PlayerMovment : MonoBehaviour {
         this.moveInput = context.ReadValue<Vector2>();
         if (this.moveInput.x > 0) {
             this.IsFacingRight = true;
+            this.playerAnimation.SetTrigger(PlayerAnimation.WalkRightTrigger);
+
         } else if (this.moveInput.x < 0) {
             this.IsFacingRight = false;
+            this.playerAnimation.SetTrigger(PlayerAnimation.WalkLeftTrigger);
+
+        } else if (this.moveInput.y > 0) {
+            this.playerAnimation.SetTrigger(PlayerAnimation.WalkBackTrigger);
+
+        } else if (this.moveInput.y < 0) {
+            this.playerAnimation.SetTrigger(PlayerAnimation.WalkFrontTrigger);
+
+        } else if (this.moveInput.x == 0 && this.moveInput.y == 0) {
+            this.playerAnimation.SetTrigger(PlayerAnimation.IdleTrigger);
         }
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         this.rb.linearVelocity = new Vector2(this.moveInput.x * this.moveSpeed, this.moveInput.y * this.moveSpeed);
     }
 }

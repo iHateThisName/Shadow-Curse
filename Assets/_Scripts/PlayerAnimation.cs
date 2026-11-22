@@ -1,0 +1,19 @@
+using UnityEngine;
+
+public class PlayerAnimation : MonoBehaviour {
+
+    public static readonly string WalkFrontTrigger = "WalkFrontTrigger";
+    public static readonly string WalkRightTrigger = "WalkRightTrigger";
+    public static readonly string WalkLeftTrigger = "WalkLeftTrigger";
+    public static readonly string WalkBackTrigger = "WalkBackTrigger";
+    public static readonly string IdleTrigger = "IdleTrigger";
+    public static readonly string MirrorFrontTrigger = "MirrorFrontTrigger";
+    public static readonly string MirrorRightTrigger = "MirrorRightTrigger";
+    public static readonly string MirrorLeftTrigger = "MirrorLeftTrigger";
+    public static readonly string MirrorBackTrigger = "MirrorBackTrigger";
+
+    [SerializeField] private Animator animator;
+    public void SetTrigger(string triggerName) {
+        this.animator.SetTrigger(triggerName);
+    }
+}
