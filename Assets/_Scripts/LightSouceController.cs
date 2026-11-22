@@ -15,31 +15,39 @@ public class LightSouceController : MonoBehaviour, IInteractable {
     [SerializeField] private Sprite[] lightOffSprites;
     private Coroutine animationCoroutine;
     public UnityEvent<bool> OnLightStateChanged;
+    [SerializeField] private AudioSource lightOnSound;
+    [SerializeField] private AudioSource lightOffSound;
     private void Awake() {
         if (this.IsLightOn) {
-            TurnOnLight();
+            TurnOnLight(false);
         } else {
-            TurnOffLight();
+            TurnOffLight(false);
             
         }
     }
 
     [ContextMenu("Turn On Light")]
-    public void TurnOnLight() {
+    public void TurnOnLight(bool playSound = true) {
         this.IsLightOn = true;
         this.lightSourceLight2D.enabled = true;
         if (this.animationCoroutine != null) StopCoroutine(this.animationCoroutine);
         this.animationCoroutine = StartCoroutine(AnimationPlayer(this.lightSourceSpriteRenderer, this.lightOnSprites, 0.1f, 0));
         OnLightStateChanged?.Invoke(true);
+        if (playSound) {
+            this.lightOnSound.Play();
+        }
     }
 
     [ContextMenu("Turn Off Light")]
-    public void TurnOffLight() {
+    public void TurnOffLight(bool playSound = true) {
         this.IsLightOn = false;
         this.lightSourceLight2D.enabled = false;
         if (this.animationCoroutine != null) StopCoroutine(this.animationCoroutine);
         this.animationCoroutine = StartCoroutine(AnimationPlayer(this.lightSourceSpriteRenderer, this.lightOffSprites, 0.1f, 0));
         OnLightStateChanged?.Invoke(false);
+        if (playSound) {
+            this.lightOffSound.Play();
+        }
     }
 
     public static IEnumerator AnimationPlayer(SpriteRenderer renderer, Sprite[] sprites, float delay, int startIndex) {
