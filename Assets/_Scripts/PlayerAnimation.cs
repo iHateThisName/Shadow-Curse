@@ -11,9 +11,13 @@ public class PlayerAnimation : MonoBehaviour {
     public static readonly string MirrorRightTrigger = "MirrorRightTrigger";
     public static readonly string MirrorLeftTrigger = "MirrorLeftTrigger";
     public static readonly string MirrorBackTrigger = "MirrorBackTrigger";
+    public static readonly string DieTrigger = "DieTrigger";
+
+    public static PlayerAnimation Instance { get; private set; }
 
     [SerializeField] private Animator animator;
     public void SetTrigger(string triggerName) {
+        Debug.Log($"Setting trigger: {triggerName}");
         this.animator.SetTrigger(triggerName);
     }
 }
