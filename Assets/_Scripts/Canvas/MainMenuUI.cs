@@ -13,6 +13,6 @@ public class MainMenuUI : MonoBehaviour {
     }
 
     private void StartGame() {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
 }
